@@ -16,19 +16,53 @@
     {{-- Header --}}
     <section class="header-section">
         <header>
-            <div class="container">
+            <div class="container navbar">
+                {{-- hamburger menu --}}
+                <div class="d-flex align-items-center">
+                    <button class="navbar-toggle d-block d-md-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon "></span>
 
-                    <a href="/"><img src="{{ asset('images/ZANDO-NEW-LOGO-2025.png') }}" alt="logo"></a>
+                </button>
+                {{-- logo --}}
+                    <a href="/" class="ms-2 ms-lg-0 "><img src="{{ asset('images/ZANDO-NEW-LOGO-2025.png') }}" alt="logo"></a>
+                </div>
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/">Shop</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/">Blog</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/">About Us</a>
+                            </li>
+                        </ul>
+                        {{-- <form class="d-flex mt-3" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                        <button class="btn btn-outline-success" type="submit">Search</button> --}}
+                        </form>
+                </div>
+            </div>
+
                     {{-- navbar --}}
                     <nav>
-                        <ul>
+                        <ul class="d-none  d-lg-flex">
                             <li><a href="/">Home</a></li>
                             <li><a href="/">Shop</a></li>
                             <li><a href="/">Blog</a></li>
                             <li><a href="/">About Us</a></li>
                         </ul>
                     </nav>
-                    <div class="socail">
+                    <div class="socail d-flex gap-2 gap-lg-4">
                         <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
                         <a href="#"><i class="fa-regular fa-heart"></i></a>
                         <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
@@ -39,7 +73,7 @@
         </header>
     </section>
 
-    <div class="content-wrapper">
+    <div class="content-wrapper container ">
         @yield('content')
     </div>
 

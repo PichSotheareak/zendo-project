@@ -4,6 +4,16 @@
     box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 .header-section {
     position: fixed;
     left: 0;
@@ -24,11 +34,10 @@ header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 0;
+    padding: 10px 12px;
     max-width: 1320px;
     margin: 0 auto;
 }
-
 
 header .container img {
     width: 130px;
@@ -71,6 +80,13 @@ header div a i {
 
 .content-wrapper {
     margin-top: 50px;
+      flex-grow: 1;
+}
+
+
+.product-card {
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
 

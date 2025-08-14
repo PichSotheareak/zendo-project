@@ -60,7 +60,7 @@
                 </tfoot>
             </table>
 
-            <button class="btn btn-primary float-end">Proceed to Checkout</button>
+            <button class="btn btn-primary float-end "><a href="/checkout">Proceed to Checkout</a></button>
         </div>
 
     </center>

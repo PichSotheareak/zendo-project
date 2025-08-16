@@ -138,34 +138,97 @@
 
 
 
-        {{-- product card --}}
-        <div class="container">
-            <div class="row">
-                @foreach ($product as $item)
-                    <div class="col-md-3">
-                        <div class="product-card">
-                            <span class="discount-tag">{{ $item->category }}</span>
-                            <span class="wishlist">
-                                <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
-                                    <path
-                                        d="M8 14s6-4.435 6-8.182C14 2.842 11.985 1 8 1S2 2.842 2 5.818C2 9.565 8 14 8 14z" />
-                                </svg>
+        {{-- product card 50% off --}}
+        <div class="container mt-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="text-dark text-capitalize  fw-bold mb-0">
+                    Latest in. Up to 50% off!💥
+                </h2>
+                <a href="{{ url('/shop?discount=20-50') }}" class="text-dark fs-5 fw-bold text-decoration-none">
+                    Shop More
+                </a>
+
+            </div>
+
+
+            <div class="d-flex flex-wrap justify-content-between">
+                @foreach ($discount20_50 as $item)
+                    <div class="mb-3" style="width: 18rem;">
+                        <!-- Image Section -->
+                        <div class="position-relative">
+                            <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
+                                style="height: 400px; object-fit: cover;">
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                -{{ $item->discount }}%
                             </span>
-                            <img src="{{ $item->image }}" alt="Refined Serpent Jacket">
-                            <div class="card-body">
-                                <div class="product-title product-title-clipped">{{ $item->name }}</div>
+                        </div>
+
+                        <!-- Description Section -->
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
-                                    <span class="price">US ${{ $item->price }}</span>
-                                    <span class="old-price">US ${{ $item->price + random_int(1, 5) }}</span>
+                                    <span class="text-danger fw-bold">US ${{ $item->price }}</span>
+                                    <small class="text-muted text-decoration-line-through ms-2">
+                                        US ${{ number_format($item->price / (1 - $item->discount / 100), 2) }}
+                                    </small>
                                 </div>
-                                <button class="btn btn-dark add-cart-btn" @click="addToCart({{ $item->id }})">
-                                    Add to Cart
-                                </button>
+                                <i class="far fa-heart text-muted"></i>
                             </div>
+                            <p class="card-text text-capitalize text-truncate mb-0 product-title-clipped">
+                                {{ $item->name }}
+                            </p>
                         </div>
                     </div>
                 @endforeach
             </div>
+
+
+        </div>
+
+        {{-- product card 80% off --}}
+        <div class="container mt-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="text-dark text-capitalize  fw-bold mb-0">
+                    ⚡Massive Slash. 80% off!
+                </h2>
+                <a href="{{ url('/shop?discount=51-80') }}" class="text-dark fs-5 fw-bold text-decoration-none">
+                    Shop More
+                </a>
+            </div>
+
+
+            <div class="d-flex flex-wrap justify-content-between">
+                @foreach ($discount51_80 as $item)
+                    <div class="mb-3" style="width: 18rem;">
+                        <!-- Image Section -->
+                        <div class="position-relative">
+                            <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
+                                style="height: 400px; object-fit: cover;">
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                -{{ $item->discount }}%
+                            </span>
+                        </div>
+
+                        <!-- Description Section -->
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <span class="text-danger fw-bold">US ${{ $item->price }}</span>
+                                    <small class="text-muted text-decoration-line-through ms-2">
+                                        US ${{ number_format($item->price / (1 - $item->discount / 100), 2) }}
+                                    </small>
+                                </div>
+                                <i class="far fa-heart text-muted"></i>
+                            </div>
+                            <p class="card-text text-capitalize text-truncate mb-0 product-title-clipped">
+                                {{ $item->name }}
+                            </p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+
         </div>
     @endsection
 

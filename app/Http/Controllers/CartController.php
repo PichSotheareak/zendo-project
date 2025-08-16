@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,34 +8,47 @@ class CartController extends Controller
 {
     public function index()
     {
-        $data = DB::table('user_cart')
-            ->select('*')
-            ->where('user_id', 1)
+        // Fetch all cart items for user 1
+        $userCart = DB::table('user_cart')
+            ->join('product', 'user_cart.product_id', '=', 'product.id')
+            ->select(
+                'user_cart.id as cart_id',
+                'product.id as product_id',
+                'product.name',
+                'product.price',
+                'product.image',
+                'user_cart.qty'
+            )
+            ->where('user_cart.user_id', 1)
             ->get();
 
         return view('cart', [
-            'cart'=>$data,
+            'user_cart' => $userCart
         ]);
     }
+
+    public function remove($id)
+{
+    DB::table('user_cart')->where('id', $id)->delete();
+    return redirect()->back();
+}
+
 
     public function addToCart(Request $request)
     {
         $productId = $request->input('product_id');
         $quantity = $request->input('quantity', 1);
 
-        // Check if the product already exists in the cart
         $existingCartItem = DB::table('user_cart')
             ->where('user_id', 1)
             ->where('product_id', $productId)
             ->first();
 
         if ($existingCartItem) {
-            // Update the quantity if it already exists
             DB::table('user_cart')
                 ->where('id', $existingCartItem->id)
                 ->update(['qty' => $existingCartItem->qty + $quantity]);
         } else {
-            // Insert a new item into the cart
             DB::table('user_cart')->insert([
                 'user_id' => 1,
                 'product_id' => $productId,
@@ -45,11 +57,20 @@ class CartController extends Controller
         }
 
         return response()->json([
-            'cart_list'=> DB::table('user_cart')
-                ->where('user_id', 1)->get(),
+            'cart_list' => DB::table('user_cart')
+                ->join('products', 'user_cart.product_id', '=', 'products.id')
+                ->select(
+                    'user_cart.id as cart_id',
+                    'products.id as product_id',
+                    'products.name',
+                    'products.price',
+                    'products.image',
+                    'user_cart.qty'
+                )
+                ->where('user_cart.user_id', 1)
+                ->get(),
             'status' => 'success',
-            'message' => 'Product added to cart successfully.',
+            'message' => 'Product added to cart successfully.'
         ]);
-
     }
 }

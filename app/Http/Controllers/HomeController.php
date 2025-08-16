@@ -9,24 +9,40 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $data = DB::table('product')
-            ->select('*')
+        $discount20_50 = DB::table('product')
+            ->whereBetween('discount', [20, 50])
             ->get();
 
-        return view('index',
-            [
-                'product'=>$data,
-            ]);
-
-    }
-    public function shop(){
-        $data = DB::table('product')
-            ->select('*')
+        $discount51_80 = DB::table('product')
+            ->whereBetween('discount', [51, 80])
             ->get();
 
-        return view('shop',
-            [
-                'product'=>$data,
-            ]);
+        return view('index', [
+            'discount20_50' => $discount20_50,
+            'discount51_80' => $discount51_80,
+        ]);
     }
+
+    public function shop(Request $request)
+    {
+        $query = DB::table('product');
+
+        // Optional discount filter from URL, e.g., ?discount=20-50
+        if ($request->has('discount')) {
+            $discountRange = explode('-', $request->discount); // ["20", "50"]
+            if (count($discountRange) == 2) {
+                $query->whereBetween('discount', [(int)$discountRange[0], (int)$discountRange[1]]);
+            }
+        }
+
+        $products = $query->get();       // Get filtered or all products
+        $count = $products->count();     // Total count of returned products
+
+        return view('shop', [
+            'products' => $products,
+            'count' => $count,
+        ]);
+    }
+
+
 }

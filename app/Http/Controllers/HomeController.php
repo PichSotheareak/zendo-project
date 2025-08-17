@@ -43,6 +43,19 @@ class HomeController extends Controller
             'count' => $count,
         ]);
     }
+    public function productDetail($id){
+        // Get the product by ID
+        $product = DB::table('product')->where('id', $id)->first();
+
+        if (!$product) {
+            // Redirect back or show 404 if product not found
+            abort(404);
+        }
+
+        return view('productDetail', [
+            'product' => $product,
+        ]);
+    }
 
 
 }

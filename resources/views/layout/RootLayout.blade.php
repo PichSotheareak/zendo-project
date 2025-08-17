@@ -78,7 +78,18 @@
                     <div class="socail d-flex gap-2 gap-lg-4">
                         <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
                         <a href="#"><i class="fa-regular fa-heart"></i></a>
-                        <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                        <div class="position-relative d-inline-block">
+                            <a href="/cart" class="text-dark">
+                                <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2 py-1"
+                                    style="font-size: 0.65rem;">
+                                    {{ $cart_count }}
+                                </span>
+                            </a>
+                        </div>
+
+
                         <a href="#"><i class="fa-regular fa-user"></i></a>
                     </div>
 

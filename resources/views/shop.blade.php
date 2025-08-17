@@ -1,7 +1,7 @@
 @extends('layout.RootLayout')
 @section('content')
     <div class="d-flex justify-content-between align-items-center py-3">
-        <h5>All Items ({{$count}})</h5>
+        <h5>All Items ({{ $count }})</h5>
         {{-- filter --}}
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,22 +19,24 @@
     <img src="https://zandokh.com/image/catalog/banner/2025/ZANDO/Augst/10 year/10Year80OFF 2160x534.jpg" class="w-100"
         alt="banner">
     {{-- product card --}}
-    <div class="container my-5">
-        <div class="row">
+    <div class=" my-5">
+        <div class="row g-3 my-5">
             @foreach ($products as $item)
-                <div class="col-md-3 ">
-                    <div  style="width: 18rem;">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class=" h-100">
                         <!-- Image Section -->
                         <div class="position-relative">
-                            <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
-                                style="height: 400px; object-fit: cover;">
-                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-                                -{{ $item->discount }}%
-                            </span>
+                            <a href="{{ url('/product/' . $item->id) }}" class="text-decoration-none">
+                                <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
+                                    style="height: 400px; object-fit: cover;">
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                    -{{ $item->discount }}%
+                                </span>
+                            </a>
                         </div>
 
                         <!-- Description Section -->
-                        <div class="card-body p-3">
+                        <div class="card-body p-3 d-flex flex-column justify-content-between">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="text-danger fw-bold">US ${{ $item->price }}</span>
@@ -52,5 +54,6 @@
                 </div>
             @endforeach
         </div>
+
     </div>
 @endsection

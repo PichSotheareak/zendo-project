@@ -73,7 +73,7 @@
                         alt="...">
                 </div>
                 <div class="carousel-item" data-bs-interval="2000">
-                    <img src="https://zandokh.com/image/catalog/banner/2025/ZANDO/Augst/10 year/10Year80OFF 2160x1066.jpg"
+                    <img src="https://zandokh.com/image/catalog/banner/2025/TEN11/new%20collection/TENELEVEN%20-%20App%20banner.jpg"
                         class="d-block w-100" alt="...">
                 </div>
             </div>
@@ -152,15 +152,17 @@
 
 
             <div class="d-flex flex-wrap justify-content-between">
-                @foreach ($discount20_50 as $item)
+                @foreach ($discount20_50->take(4) as $item)
                     <div class="mb-3" style="width: 18rem;">
                         <!-- Image Section -->
                         <div class="position-relative">
-                            <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
-                                style="height: 400px; object-fit: cover;">
-                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-                                -{{ $item->discount }}%
-                            </span>
+                            <a href="{{ url('/product/' . $item->id) }}" class="text-decoration-none">
+                                <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
+                                    style="height: 400px; object-fit: cover;">
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                    -{{ $item->discount }}%
+                                </span>
+                            </a>
                         </div>
 
                         <!-- Description Section -->
@@ -198,15 +200,17 @@
 
 
             <div class="d-flex flex-wrap justify-content-between">
-                @foreach ($discount51_80 as $item)
+                @foreach ($discount51_80->take(4) as $item)
                     <div class="mb-3" style="width: 18rem;">
                         <!-- Image Section -->
                         <div class="position-relative">
-                            <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
-                                style="height: 400px; object-fit: cover;">
-                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-                                -{{ $item->discount }}%
-                            </span>
+                            <a href="{{ url('/product/' . $item->id) }}" class="text-decoration-none">
+                                <img src="{{ $item->image }}" class="card-img-top" alt="{{ $item->name }}"
+                                    style="height: 400px; object-fit: cover;">
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                    -{{ $item->discount }}%
+                                </span>
+                            </a>
                         </div>
 
                         <!-- Description Section -->

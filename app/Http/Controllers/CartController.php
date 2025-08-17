@@ -58,13 +58,13 @@ class CartController extends Controller
 
         return response()->json([
             'cart_list' => DB::table('user_cart')
-                ->join('products', 'user_cart.product_id', '=', 'products.id')
+                ->join('product', 'user_cart.product_id', '=', 'product.id')
                 ->select(
                     'user_cart.id as cart_id',
-                    'products.id as product_id',
-                    'products.name',
-                    'products.price',
-                    'products.image',
+                    'product.id as product_id',
+                    'product.name',
+                    'product.price',
+                    'product.image',
                     'user_cart.qty'
                 )
                 ->where('user_cart.user_id', 1)

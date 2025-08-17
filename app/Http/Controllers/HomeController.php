@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
+    private $userId = 1;
+
     public function index()
     {
         $discount20_50 = DB::table('product')
@@ -17,9 +19,15 @@ class HomeController extends Controller
             ->whereBetween('discount', [51, 80])
             ->get();
 
+
+        $cart_count = DB::table('user_cart')
+            ->where('user_id', $this->userId)
+            ->sum('qty');
+
         return view('index', [
             'discount20_50' => $discount20_50,
             'discount51_80' => $discount51_80,
+            'cart_count' => $cart_count,
         ]);
     }
 
@@ -29,33 +37,45 @@ class HomeController extends Controller
 
         // Optional discount filter from URL, e.g., ?discount=20-50
         if ($request->has('discount')) {
-            $discountRange = explode('-', $request->discount); // ["20", "50"]
+            $discountRange = explode('-', $request->discount);
             if (count($discountRange) == 2) {
                 $query->whereBetween('discount', [(int)$discountRange[0], (int)$discountRange[1]]);
             }
         }
 
-        $products = $query->get();       // Get filtered or all products
-        $count = $products->count();     // Total count of returned products
+        $products = $query->get();
+        $count = $products->count();
+
+
+        $cart_count = DB::table('user_cart')
+            ->where('user_id', $this->userId)
+            ->sum('qty');
 
         return view('shop', [
             'products' => $products,
             'count' => $count,
+            'cart_count' => $cart_count,
         ]);
     }
-    public function productDetail($id){
-        // Get the product by ID
+
+    public function productDetail($id)
+    {
+
         $product = DB::table('product')->where('id', $id)->first();
 
         if (!$product) {
-            // Redirect back or show 404 if product not found
+
             abort(404);
         }
 
+
+        $cart_count = DB::table('user_cart')
+            ->where('user_id', $this->userId)
+            ->sum('qty');
+
         return view('productDetail', [
             'product' => $product,
+            'cart_count' => $cart_count,
         ]);
     }
-
-
 }

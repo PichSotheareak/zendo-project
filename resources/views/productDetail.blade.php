@@ -47,26 +47,28 @@
                 </div>
 
                 <!-- Quantity -->
-                <div class="my-4">
+                <div class="my-4" id="app">
                     <p class="fw-semibold mb-2">Quantity</p>
                     <div class="d-flex gap-2 align-items-center">
-                        <button class="btn btn-outline-dark">-</button>
-                        <span class="px-4 py-2 border bg-light">1</span>
-                        <button class="btn btn-outline-dark" >+</button>
+                        <button class="btn btn-outline-dark" @click="decreaseQty">-</button>
+                        <span class="px-4 py-2 border bg-light">[[ qty ]]</span>
+                        <button class="btn btn-outline-dark" @click="increaseQty">+</button>
                     </div>
                     {{-- <p class="text-danger mt-2">Out of stock for this size</p> --}}
-                </div>
 
-                <!-- Add to Bag -->
-                <div class="my-4 d-flex gap-3 align-items-center">
-                    <button class="btn btn-dark w-100 fw-bold py-3" @click="addToCart({{ $product->id }})">
-                        Add to Bag
-                    </button>
-                    <button class="btn btn-light border">
-                        <i class="bi bi-heart fs-4"></i>
-                    </button>
+                    <!-- Add to Bag -->
+                    <div class="my-4 d-flex gap-3 align-items-center">
+                        <button class="btn btn-dark w-100 fw-bold py-3" @click="addToCart({{ $product->id }})">
+                            Add to Bag
+                        </button>
+                        <button class="btn btn-light border">
+                            <i class="bi bi-heart fs-4"></i>
+                        </button>
+                    </div>
                 </div>
+                >
             </div>
         </div>
+    </div>
     </div>
 @endsection()

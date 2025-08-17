@@ -84,8 +84,9 @@
                                 <span
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2 py-1"
                                     style="font-size: 0.65rem;">
-                                    {{ $cart_count }}
+                                    [[ cartCount ]]
                                 </span>
+
                             </a>
                         </div>
 
@@ -207,48 +208,68 @@
     <script>
         const {
             createApp
-        } = Vue
+        } = Vue;
 
         createApp({
             delimiters: ['[[', ']]'],
             data() {
                 return {
-                    message: 'Hello Vue!',
-                    cart_list: []
+                    qty: 1,
+                    stock: 1,
+                    cart_list: [],
+                    cartCount: {{ $cart_count ?? 0 }} 
                 }
             },
             methods: {
+                increaseQty() {
+                    if (this.qty < this.stock) this.qty++;
+                },
+                decreaseQty() {
+                    if (this.qty > 1) this.qty--;
+                },
                 addToCart(product_id) {
-                    let url = '{{ route('addToCart') }}'
+                    let url = '{{ route('addToCart') }}';
+                    let vm = this;
                     $.LoadingOverlay("show");
-                    vm = this
+
                     axios.post(url, {
-                            product_id: product_id
+                            product_id: product_id,
+                            quantity: this.qty
                         })
                         .then(function(response) {
-                            vm.cart_list = response.data.cart_list
-                            let cart_count_label = document.getElementById('cart_count_label')
-                            cart_count_label.innerText = (vm.cart_list).length
+                            vm.cart_list = response.data.cart_list;
+                            vm.cartCount = response.data.cart_count;
+
                             Swal.fire({
-                                position: "top-start",
+                                position: "center",
                                 icon: "success",
-                                title: "Your product has been add to cart",
+                                title: "Your product has been added to cart",
                                 showConfirmButton: false,
                                 timer: 1500
                             });
-
                         })
                         .catch(function(error) {
                             console.log(error);
-                        }).finally(function() {
+                        })
+                        .finally(function() {
                             $.LoadingOverlay("hide");
+                        });
+                },
+                getCartCount() {
+                    let url = '{{ route('getCartCount') }}';
+                    let vm = this;
+
+                    axios.get(url)
+                        .then(function(response) {
+                            vm.cartCount = response.data.cart_count;
+                        })
+                        .catch(function(error) {
+                            console.log(error);
                         });
                 }
             }
-        }).mount('#app')
+        }).mount('#app');
     </script>
-
-
 
 </body>
 

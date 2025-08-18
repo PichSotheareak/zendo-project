@@ -14,54 +14,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Product 1 -->
-                    <tr>
-                        <td class="d-flex align-items-center">
-                            <img src="https://via.placeholder.com/60" alt="Product 1" class="me-3" />
-                            <div>
-                                <p class="mb-0">Classic Sneakers</p>
-                                <small class="text-muted">Comfortable everyday shoes</small>
-                            </div>
-                        </td>
-                        <td>$50.00</td>
-                        <td>
-                            <input type="number" class="form-control" style="width: 70px;" value="2" min="1" />
-                        </td>
-                        <td>$100.00</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm">Remove</button>
-                        </td>
-                    </tr>
-
-                    <!-- Product 2 -->
-                    <tr>
-                        <td class="d-flex align-items-center">
-                            <img src="https://via.placeholder.com/60" alt="Product 2" class="me-3" />
-                            <div>
-                                <p class="mb-0">Leather Wallet</p>
-                                <small class="text-muted">Genuine leather, brown color</small>
-                            </div>
-                        </td>
-                        <td>$35.00</td>
-                        <td>
-                            <input type="number" class="form-control" style="width: 70px;" value="1" min="1" />
-                        </td>
-                        <td>$35.00</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm">Remove</button>
-                        </td>
-                    </tr>
+                    @forelse($user_cart as $item)
+                        <tr>
+                            <td class="d-flex align-items-center">
+                                <img src="{{ $item->image }}" alt="{{ $item->name }}" class="me-3" width="60" />
+                                <div>
+                                    <p class="mb-0">{{ $item->name }}</p>
+                                </div>
+                            </td>
+                            <td>${{ number_format($item->price, 2) }}</td>
+                            <td>
+                                <input type="number" class="form-control" style="width: 70px;" value="{{ $item->qty }}"
+                                    min="1" />
+                            </td>
+                            <td>${{ number_format($item->price * $item->qty, 2) }}</td>
+                            <td>
+                                <form action="{{ route('removeFromCart', $item->cart_id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">Your cart is empty.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="4" class="text-end fw-bold">Total:</td>
-                        <td colspan="1" class="fw-bold">$135.00</td>
+                        <td class="fw-bold">
+                            ${{ number_format($user_cart->sum(fn($item) => $item->price * $item->qty), 2) }}
+                        </td>
                     </tr>
                 </tfoot>
             </table>
 
-            <button class="btn btn-primary float-end "><a href="/checkout">Proceed to Checkout</a></button>
+            <a href="/checkout" class="btn btn-primary float-end">Proceed to Checkout</a>
         </div>
-
     </center>
 @endsection

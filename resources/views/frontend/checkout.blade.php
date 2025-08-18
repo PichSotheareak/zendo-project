@@ -1,6 +1,6 @@
 @extends('frontend.layout.RootLayout')
 @section('content')
-<div class="container">
+<div class="container my-5">
         <h2 class="mb-4 text-center">🧾 Checkout</h2>
         <div class="row">
             <!-- Billing Form -->

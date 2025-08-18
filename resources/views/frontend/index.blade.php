@@ -59,7 +59,7 @@
 </head>
 
 <body>
-    @extends('layout.RootLayout')
+    @extends('frontend.layout.RootLayout')
     @section('content')
         {{-- slider --}}
         <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">

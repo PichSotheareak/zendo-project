@@ -14,21 +14,20 @@ class HomeController extends Controller
         $discount20_50 = DB::table('product')
             ->whereBetween('discount', [20, 50])
             ->get();
-
         $discount51_80 = DB::table('product')
             ->whereBetween('discount', [51, 80])
             ->get();
-
-
         $cart_count = DB::table('user_cart')
             ->where('user_id', $this->userId)
             ->sum('qty');
 
-        return view('index', [
-            'discount20_50' => $discount20_50,
-            'discount51_80' => $discount51_80,
-            'cart_count' => $cart_count,
-        ]);
+        return view('frontend.index',
+            [
+                'discount20_50' => $discount20_50,
+                'discount51_80' => $discount51_80,
+                'cart_count' => $cart_count,
+            ]);
+
     }
 
     public function shop(Request $request)
@@ -51,7 +50,7 @@ class HomeController extends Controller
             ->where('user_id', $this->userId)
             ->sum('qty');
 
-        return view('shop', [
+        return view('frontend.shop', [
             'products' => $products,
             'count' => $count,
             'cart_count' => $cart_count,
@@ -73,7 +72,7 @@ class HomeController extends Controller
             ->where('user_id', $this->userId)
             ->sum('qty');
 
-        return view('productDetail', [
+        return view('frontend.productDetail', [
             'product' => $product,
             'cart_count' => $cart_count,
         ]);

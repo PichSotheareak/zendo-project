@@ -8,7 +8,7 @@
     {{-- fontawesome cdn --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
           integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     {{-- bootstrap cdn --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -78,7 +78,19 @@
                 <div class="socail d-flex gap-2 gap-lg-4">
                     <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
                     <a href="#"><i class="fa-regular fa-heart"></i></a>
-                    <a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                    <div class="position-relative d-inline-block">
+                        <a href="/cart" class="text-dark">
+                            <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2 py-1"
+                                style="font-size: 0.65rem;">
+                                    [[ cartCount ]]
+                                </span>
+
+                        </a>
+                    </div>
+
+
                     <a href="#"><i class="fa-regular fa-user"></i></a>
                 </div>
 
@@ -97,7 +109,7 @@
             <div class="col-12 col-md-4 col-lg-3 col-xl-2">
                 <h6 class="fw-bold text-uppercase mb-2">zando app</h6>
                 <img src="https://zandokh.com/image/catalog/logo/qr_code_app.png" alt="zando qr" class="img-fluid"
-                     style="width: 80px;"/>
+                     style="width: 80px;" />
             </div>
 
             <!-- Loyalty -->
@@ -179,9 +191,8 @@
             <!-- We accept -->
             <div class="col-12 col-md-4 col-lg-3 col-xl-2">
                 <h6 class="fw-bold text-uppercase mb-2">we accept</h6>
-                <img
-                    src="https://zandokh.com/image/catalog/logo/web-footer/We-accept-payment%E2%80%93for-web-footer-1.png"
-                    alt="payment" class="img-fluid"/>
+                <img src="https://zandokh.com/image/catalog/logo/web-footer/We-accept-payment%E2%80%93for-web-footer-1.png"
+                     alt="payment" class="img-fluid" />
             </div>
         </section>
 
@@ -189,8 +200,7 @@
             © 2015 -
             <script>
                 document.write(new Date().getFullYear())
-            </script>
-            Zando. All rights reserved.
+            </script> Zando. All rights reserved.
         </section>
     </footer>
 </div>
@@ -198,47 +208,220 @@
 <script>
     const {
         createApp
-    } = Vue
+    } = Vue;
 
     createApp({
         delimiters: ['[[', ']]'],
         data() {
             return {
-                message: 'Hello Vue!',
-                cart_list: []
+                qty: 1,
+                stock: {{ $product->stock ?? 100 }},
+                cart_list: [],
+                cartCount: {{ $cart_count ?? 0 }}
             }
         },
         methods: {
+            increaseQty() {
+                if (this.qty < this.stock) this.qty++;
+            },
+            decreaseQty() {
+                if (this.qty > 1) this.qty--;
+            },
             addToCart(product_id) {
-                let url = '{{ route('addToCart') }}'
+                let url = '{{ route('addToCart') }}';
+                let vm = this;
                 $.LoadingOverlay("show");
-                vm = this
+
                 axios.post(url, {
-                    product_id: product_id
+                    product_id: product_id,
+                    quantity: this.qty
                 })
-                    .then(function (response) {
-                        vm.cart_list = response.data.cart_list
-                        let cart_count_label = document.getElementById('cart_count_label')
-                        cart_count_label.innerText = (vm.cart_list).length
+                    .then(function(response) {
+                        vm.cart_list = response.data.cart_list;
+                        vm.cartCount = response.data.cart_count;
+
                         Swal.fire({
-                            position: "top-start",
+                            position: "center",
                             icon: "success",
-                            title: "Your product has been add to cart",
+                            title: "Your product has been added to cart",
                             showConfirmButton: false,
                             timer: 1500
                         });
-
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                         console.log(error);
-                    }).finally(function () {
-                    $.LoadingOverlay("hide");
+                    })
+                    .finally(function() {
+                        $.LoadingOverlay("hide");
+                    });
+            },
+            getCartCount() {
+                let url = '{{ route('getCartCount') }}';
+                let vm = this;
+
+                axios.get(url)
+                    .then(function(response) {
+                        vm.cartCount = response.data.cart_count;
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            },
+            updateCartQuantity(cart_id, new_quantity) {
+                new_quantity = parseInt(new_quantity);
+
+                if (new_quantity < 1) {
+                    return;
+                }
+
+                let url = '{{ route('updateCartQuantity') }}';
+                let vm = this;
+
+                $.LoadingOverlay("show");
+
+                axios.post(url, {
+                    cart_id: cart_id,
+                    quantity: new_quantity
+                })
+                    .then(function(response) {
+                        if (response.data.success) {
+                            // Update the quantity input
+                            let input = document.querySelector(`input[data-cart-id="${cart_id}"]`);
+                            if (input) {
+                                input.value = new_quantity;
+
+                                // Update the item total
+                                let price = parseFloat(input.dataset.price);
+                                let itemTotal = price * new_quantity;
+                                let itemRow = document.querySelector(`#cart-item-${cart_id}`);
+                                if (itemRow) {
+                                    itemRow.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
+                                }
+                            }
+
+                            // Update grand total
+                            vm.updateGrandTotal();
+
+                            // Update cart count in header
+                            vm.cartCount = response.data.cart_count;
+
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: "Quantity updated successfully",
+                                showConfirmButton: false,
+                                timer: 1000
+                            });
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: "Failed to update quantity",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        // Reset the input to original value on error
+                        window.location.reload();
+                    })
+                    .finally(function() {
+                        $.LoadingOverlay("hide");
+                    });
+            },
+
+            removeCartItem(cart_id) {
+                let url = `/cart/remove/${cart_id}`;
+                let vm = this;
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, remove it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.LoadingOverlay("show");
+
+                        axios.delete(url)
+                            .then(function(response) {
+                                if (response.data.success) {
+                                    // Remove the row from table
+                                    let itemRow = document.querySelector(`#cart-item-${cart_id}`);
+                                    if (itemRow) {
+                                        itemRow.remove();
+                                    }
+
+                                    // Update grand total
+                                    vm.updateGrandTotal();
+
+                                    // Update cart count
+                                    vm.cartCount = response.data.cart_count;
+
+                                    // Check if cart is empty
+                                    let remainingItems = document.querySelectorAll('tbody tr[id^="cart-item-"]');
+                                    if (remainingItems.length === 0) {
+                                        let tbody = document.querySelector('tbody');
+                                        if (tbody) {
+                                            tbody.innerHTML = '<tr id="empty-cart-row"><td colspan="5" class="text-center">Your cart is empty.</td></tr>';
+                                        }
+                                        let checkoutBtn = document.querySelector('.btn-primary.float-end');
+                                        if (checkoutBtn) {
+                                            checkoutBtn.style.display = 'none';
+                                        }
+                                    }
+
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "success",
+                                        title: "Item removed successfully",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                }
+                            })
+                            .catch(function(error) {
+                                console.log(error);
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "Failed to remove item",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            })
+                            .finally(function() {
+                                $.LoadingOverlay("hide");
+                            });
+                    }
                 });
+            },
+
+            updateGrandTotal() {
+                let total = 0;
+                let cartItems = document.querySelectorAll('tbody tr[id^="cart-item-"]');
+
+                cartItems.forEach(function(row) {
+                    let input = row.querySelector('.quantity-input');
+                    if (input) {
+                        let price = parseFloat(input.dataset.price);
+                        let quantity = parseInt(input.value);
+                        total += price * quantity;
+                    }
+                });
+
+                let grandTotalElement = document.querySelector('#cart-grand-total');
+                if (grandTotalElement) {
+                    grandTotalElement.textContent = '$' + total.toFixed(2);
+                }
             }
         }
-    }).mount('#app')
+    }).mount('#app');
 </script>
-
 
 </body>
 

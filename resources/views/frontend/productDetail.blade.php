@@ -1,14 +1,14 @@
-@extends('layout.RootLayout')
+@extends('frontend.layout.RootLayout')
+
 @section('content')
     <div class="container my-5">
         <div class="row g-4">
             <!-- Images -->
             <div class="col-lg-6 d-flex justify-content-center gap-3">
-
                 <!-- Main Image -->
                 <div>
                     <img src="{{ $product->image }}" alt="{{ $product->name }}" class="img-fluid"
-                        style="max-height: 500px; object-fit: cover;">
+                         style="max-height: 500px; object-fit: cover;">
                 </div>
             </div>
 
@@ -21,15 +21,14 @@
                         <h4 class="text-danger fw-bold mb-0">US ${{ $product->price }}</h4>
                         <span class="fw-bold text-dark">-{{ $product->discount }}%</span>
                         <span class="fw-semibold text-muted text-decoration-line-through">
-                            US ${{ number_format($product->price / (1 - $product->discount / 100), 2) }}
-                        </span>
+                        US ${{ number_format($product->price / (1 - $product->discount / 100), 2) }}
+                    </span>
                     </div>
 
                     <!-- Share -->
                     <button class="btn btn-secondary">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     </button>
-
                 </div>
 
                 <!-- Product Name -->
@@ -47,7 +46,7 @@
                 </div>
 
                 <!-- Quantity -->
-                <div class="my-4" id="app">
+                <div class="my-4">
                     <p class="fw-semibold mb-2">Quantity</p>
                     <div class="d-flex gap-2 align-items-center">
                         <button class="btn btn-outline-dark" @click="decreaseQty">-</button>
@@ -66,9 +65,7 @@
                         </button>
                     </div>
                 </div>
-                >
             </div>
         </div>
     </div>
-    </div>
-@endsection()
+@endsection

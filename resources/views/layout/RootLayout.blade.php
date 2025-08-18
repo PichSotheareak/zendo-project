@@ -217,15 +217,17 @@
                     qty: 1,
                     stock: 1,
                     cart_list: [],
-                    cartCount: {{ $cart_count ?? 0 }} 
+                    cartCount: {{ $cart_count ?? 0 }}
                 }
             },
             methods: {
                 increaseQty() {
                     if (this.qty < this.stock) this.qty++;
+
                 },
                 decreaseQty() {
                     if (this.qty > 1) this.qty--;
+
                 },
                 addToCart(product_id) {
                     let url = '{{ route('addToCart') }}';

@@ -1,4 +1,4 @@
-@extends('layout.RootLayout')
+@extends('frontend.layout.RootLayout')
 @section('content')
     <center>
         <div class="container my-5">

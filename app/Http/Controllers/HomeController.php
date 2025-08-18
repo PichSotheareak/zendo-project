@@ -13,7 +13,7 @@ class HomeController extends Controller
             ->select('*')
             ->get();
 
-        return view('index',
+        return view('frontend.index',
             [
                 'product'=>$data,
             ]);
@@ -24,7 +24,7 @@ class HomeController extends Controller
             ->select('*')
             ->get();
 
-        return view('shop',
+        return view('frontend.shop',
             [
                 'product'=>$data,
             ]);

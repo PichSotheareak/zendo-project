@@ -1,4 +1,4 @@
-@extends('layout.RootLayout')
+@extends('frontend.layout.RootLayout')
 @section('content')
 <div class="container">
         <h2 class="mb-4 text-center">🧾 Checkout</h2>

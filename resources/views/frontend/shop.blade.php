@@ -1,4 +1,4 @@
-@extends('layout.RootLayout')
+@extends('frontend.layout.RootLayout')
 @section('content')
     <div class="d-flex justify-content-between align-items-center py-3">
         <h5>New Items (249)</h5>

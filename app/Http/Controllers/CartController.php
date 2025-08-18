@@ -14,7 +14,7 @@ class CartController extends Controller
             ->where('user_id', 1)
             ->get();
 
-        return view('cart', [
+        return view('frontend.cart', [
             'cart'=>$data,
         ]);
     }

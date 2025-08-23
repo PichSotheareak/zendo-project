@@ -3,61 +3,74 @@
     <div class="container my-5">
         <h2 class="mb-4 text-center">Your Shopping Cart</h2>
 
-        @if(session('error'))
+        @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
-        @if(isset($cart_items) && count($cart_items) > 0)
+        @if (isset($cart_items) && count($cart_items) > 0)
             <form id="checkout-form" method="GET" action="{{ route('checkout') }}">
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
-                        <tr>
-                            <th>
-                                <input type="checkbox" id="select-all" class="form-check-input">
-                            </th>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                            <th>Action</th>
-                        </tr>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="select-all" class="form-check-input">
+                                </th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @foreach($cart_items as $item)
-                            <tr id="cart-item-{{ $item->cart_id }}">
-                                <td>
-                                    <input type="checkbox" class="item-checkbox" name="selected_products[]" value="{{ $item->cart_id }}">
-                                </td>
-                                <td>{{ $item->name }}</td>
-                                <td>${{ number_format($item->price, 2) }}</td>
-                                <td>
-                                    <input type="number"
-                                           class="form-control quantity-input"
-                                           data-cart-id="{{ $item->cart_id }}"
-                                           data-price="{{ $item->price }}"
-                                           value="{{ $item->quantity }}"
-                                           min="1"
-                                           @change="updateQuantityInput(this)">
-                                </td>
-                                <td class="item-total">${{ number_format($item->price * $item->quantity, 2) }}</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger" @click="removeCartItem({{ $item->cart_id }})">
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
+                            @foreach ($cart_items as $item)
+                                <tr id="cart-item-{{ $item->cart_id }}">
+                                    <td>
+                                        <input type="checkbox" class="item-checkbox" name="selected_products[]"
+                                            value="{{ $item->cart_id }}">
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ $item->image ?? '/images/no-image.png' }}"
+                                                alt="{{ $item->name }}" class="me-3 rounded"
+                                                style="width: 60px; height: 60px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0">{{ $item->name }}</h6>
+                                                @if (isset($item->description))
+                                                    <small
+                                                        class="text-muted">{{ Str::limit($item->description, 50) }}</small>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>${{ number_format($item->price, 2) }}</td>
+                                    <td>
+                                        <input type="number" class="form-control quantity-input"
+                                            data-cart-id="{{ $item->cart_id }}" data-price="{{ $item->price }}"
+                                            value="{{ $item->quantity }}" min="1"
+                                            @change="updateCartQuantity({{ $item->cart_id }}, $event.target.value)">
+                                    </td>
+                                    <td class="item-total">${{ number_format($item->price * $item->quantity, 2) }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger"
+                                            @click="removeCartItem({{ $item->cart_id }})">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -76,7 +89,8 @@
                             <hr>
                             <div class="d-flex justify-content-between mb-3">
                                 <strong>Cart Total:</strong>
-                                <strong id="cart-grand-total">${{ number_format($cart_items->sum(fn($i) => $i->price * $i->quantity), 2) }}</strong>
+                                <strong
+                                    id="cart-grand-total">${{ number_format($cart_items->sum(fn($i) => $i->price * $i->quantity), 2) }}</strong>
                             </div>
 
                             <div class="mb-3">
@@ -85,7 +99,8 @@
 
                             <div id="shipping-message" class="mb-3"></div>
 
-                            <button type="button" class="btn btn-outline-primary mb-2" onclick="window.location.href='{{ route('shop') }}'">
+                            <button type="button" class="btn btn-outline-primary mb-2"
+                                onclick="window.location.href='{{ route('shop') }}'">
                                 <i class="fas fa-arrow-left me-2"></i>Continue Shopping
                             </button>
 
@@ -132,7 +147,7 @@
                 const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
                 const selectedCount = selectedCheckboxes.length;
 
-                if(selectedCount > 0) {
+                if (selectedCount > 0) {
                     let selectedTotal = 0;
 
                     selectedCheckboxes.forEach(cb => {
@@ -147,16 +162,19 @@
                     const finalTotal = selectedTotal + shipping;
 
                     checkoutBtn.disabled = false;
-                    checkoutBtn.innerHTML = `<i class="fas fa-credit-card me-2"></i>Proceed to Checkout ($${finalTotal.toFixed(2)})`;
+                    checkoutBtn.innerHTML =
+                        `<i class="fas fa-credit-card me-2"></i>Proceed to Checkout ($${finalTotal.toFixed(2)})`;
                     selectedCountSpan.textContent = `${selectedCount} item${selectedCount > 1 ? 's' : ''} selected`;
                     selectedTotalSpan.textContent = `$${selectedTotal.toFixed(2)}`;
                     shippingCostSpan.textContent = shipping > 0 ? `$${shipping.toFixed(2)}` : 'Free';
 
-                    if(shipping === 0){
-                        shippingMessage.innerHTML = '<p class="text-success mb-0"><i class="fas fa-check-circle me-2"></i>Free shipping applied! 🎉</p>';
+                    if (shipping === 0) {
+                        shippingMessage.innerHTML =
+                            '<p class="text-success mb-0"><i class="fas fa-check-circle me-2"></i>Free shipping applied! 🎉</p>';
                     } else {
                         const needed = 2.00 - selectedTotal;
-                        shippingMessage.innerHTML = `<p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Add $${needed.toFixed(2)} more for free shipping</p>`;
+                        shippingMessage.innerHTML =
+                            `<p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Add $${needed.toFixed(2)} more for free shipping</p>`;
                     }
                 } else {
                     checkoutBtn.disabled = true;
@@ -187,7 +205,7 @@
 
             document.getElementById('checkout-form')?.addEventListener('submit', function(e) {
                 const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
-                if(selectedCheckboxes.length === 0){
+                if (selectedCheckboxes.length === 0) {
                     e.preventDefault();
                     alert('Please select at least one item to checkout.');
                     return false;
@@ -197,63 +215,19 @@
             });
         });
 
-        function updateQuantityInput(input){
-            const cartId = input.dataset.cartId;
-            const quantity = parseInt(input.value);
-            if(quantity < 1) input.value = 1;
-
-            fetch('/cart/update-quantity', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ cart_id: cartId, quantity: input.value })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success){
-                        const price = parseFloat(input.dataset.price);
-                        const row = input.closest('tr');
-                        row.querySelector('.item-total').textContent = `$${(price * parseInt(input.value)).toFixed(2)}`;
-                        document.dispatchEvent(new Event('change'));
-                    } else {
-                        alert(data.message || 'Error updating quantity');
+        function clearCart() {
+            if (!confirm('Are you sure you want to clear the cart?')) return;
+            fetch('/cart/clear', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 })
-                .catch(err => { console.error(err); alert('Error updating quantity.'); });
-        }
-
-        function removeCartItem(cartId){
-            if(!confirm('Are you sure you want to remove this item?')) return;
-            fetch(`/cart/remove/${cartId}`, {
-                method: 'DELETE',
-                headers:{
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type':'application/json'
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success){
-                        document.getElementById(`cart-item-${cartId}`).remove();
-                        document.dispatchEvent(new Event('change'));
-                        if(document.querySelectorAll('.item-checkbox').length === 0){
-                            location.reload();
-                        }
-                    } else alert(data.message || 'Error removing item');
-                })
-                .catch(err => { console.error(err); alert('Error removing item.'); });
-        }
-
-        function clearCart(){
-            if(!confirm('Are you sure you want to clear the cart?')) return;
-            fetch('/cart/clear', {
-                method:'POST',
-                headers:{ 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') }
-            })
                 .then(res => location.reload())
-                .catch(err => { console.error(err); alert('Error clearing cart.'); });
+                .catch(err => {
+                    console.error(err);
+                    alert('Error clearing cart.');
+                });
         }
     </script>
 @endsection

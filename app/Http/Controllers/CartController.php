@@ -113,48 +113,54 @@ class CartController extends Controller
     }
 
     public function updateQuantity(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'cart_id' => 'required|integer',
-                'quantity' => 'required|integer|min:1|max:99'
-            ]);
+{
+    try {
+        $validator = Validator::make($request->all(), [
+            'cart_id' => 'required|integer',
+            'quantity' => 'required|integer|min:1|max:99'
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid quantity'
-                ], 400);
-            }
-
-            $updated = DB::table('user_cart')
-                ->where('id', $request->cart_id)
-                ->where('user_id', $this->userId)
-                ->update([
-                    'qty' => $request->quantity,
-                    'updated_at' => now()
-                ]);
-
-            if (!$updated) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Cart item not found'
-                ], 404);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Quantity updated successfully'
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Update Cart Quantity Error: ' . $e->getMessage());
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unable to update quantity'
-            ], 500);
+                'message' => 'Invalid quantity'
+            ], 400);
         }
+
+        $updated = DB::table('user_cart')
+            ->where('id', $request->cart_id)
+            ->where('user_id', $this->userId)
+            ->update([
+                'qty' => $request->quantity,
+                'updated_at' => now()
+            ]);
+
+        if (!$updated) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cart item not found'
+            ], 404);
+        }
+
+        // Get updated cart count
+        $cart_count = DB::table('user_cart')
+            ->where('user_id', $this->userId)
+            ->sum('qty');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quantity updated successfully',
+            'cart_count' => $cart_count
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Update Cart Quantity Error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Unable to update quantity'
+        ], 500);
     }
+}
 
     public function removeItem($cartId)
     {

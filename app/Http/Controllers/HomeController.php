@@ -34,7 +34,7 @@ class HomeController extends Controller
     {
         $query = DB::table('product');
 
-        // Optional discount filter from URL, e.g., ?discount=20-50
+        // ✅ Optional discount filter from URL, e.g., ?discount=20-50
         if ($request->has('discount')) {
             $discountRange = explode('-', $request->discount);
             if (count($discountRange) == 2) {
@@ -42,9 +42,32 @@ class HomeController extends Controller
             }
         }
 
-        $products = $query->get();
-        $count = $products->count();
+        // ✅ Sorting (from ?sort=price_high, price_low, discount_high, etc.)
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'new':
+                    $query->orderBy('id', 'desc'); // assuming "id" means newest
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'discount_high':
+                    $query->orderBy('discount', 'desc');
+                    break;
+                case 'discount_low':
+                    $query->orderBy('discount', 'asc');
+                    break;
+            }
+        }
 
+        // ✅ Pagination
+        $products = $query->paginate(12)->appends($request->query());
+        // keep query params in pagination links
+
+        $count = $products->total();
 
         $cart_count = DB::table('user_cart')
             ->where('user_id', $this->userId)
@@ -56,6 +79,8 @@ class HomeController extends Controller
             'cart_count' => $cart_count,
         ]);
     }
+
+
 
     public function productDetail($id)
     {

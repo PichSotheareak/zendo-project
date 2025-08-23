@@ -19,11 +19,11 @@
     <img src="https://zandokh.com/image/catalog/banner/2025/ZANDO/Augst/10 year/10Year80OFF 2160x534.jpg" class="w-100"
         alt="banner">
     {{-- product card --}}
-    <div class=" my-5">
+    <div class="my-5">
         <div class="row g-3 my-5">
             @foreach ($products as $item)
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                    <div class=" h-100">
+                    <div class="h-100">
                         <!-- Image Section -->
                         <div class="position-relative">
                             <a href="{{ url('/product/' . $item->id) }}" class="text-decoration-none">
@@ -54,6 +54,12 @@
                 </div>
             @endforeach
         </div>
+
+        <!-- ✅ Pagination links -->
+        <div class="d-flex justify-content-center">
+            {!! $products->links('pagination::bootstrap-5') !!}
+        </div>
+
 
     </div>
 @endsection
